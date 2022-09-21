@@ -1,10 +1,12 @@
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import UserList from './src/views/UserList';
+import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navigation/native-stack';
+import UserList, { UserData } from './src/views/UserList';
 import UserForm from './src/views/UserForm';
 import { Button, Icon } from 'react-native-elements';
 
 const Stack = createNativeStackNavigator();
+
+export type Navigation = NativeStackScreenProps<{ UserForm: UserData | undefined }>;
 
 export default function App() {
   return (
@@ -13,13 +15,21 @@ export default function App() {
         <Stack.Screen
           name="UserList"
           component={UserList}
-          options={() => {
+          options={({ navigation }: Navigation) => {
             return {
               title: 'Users List',
               headerRight: () => (
                 <Button
                   type="clear"
-                  icon={<Icon name="add" size={25} color={'#fff'} tvParallaxProperties={undefined} />}
+                  icon={
+                    <Icon
+                      name="add"
+                      size={25}
+                      color={'#fff'}
+                      tvParallaxProperties={undefined}
+                      onPress={() => navigation.navigate('UserForm')}
+                    />
+                  }
                 />
               ),
             };
