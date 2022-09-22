@@ -1,8 +1,9 @@
 import { View, Text, TextInput, StyleSheet } from 'react-native';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { UserData } from './UserList';
 import { Button } from 'react-native-elements';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import UsersContext from '../contexts/UsersContext';
 
 export interface RouteProps {
   route: { params: UserData };
@@ -10,14 +11,15 @@ export interface RouteProps {
 }
 
 const UserForm = ({ route, navigation }: RouteProps) => {
-  const [user, setUser] = useState<UserData | undefined>(route.params ? route.params : undefined);
+  const [user, setUser] = useState<UserData | any>(route ? route.params : {}); //@ TO DO: SOLVE CONFLICTS WHEN THERE'S NO USER
+  const { dispatch } = useContext(UsersContext);
 
   return (
     <View style={styles.form}>
       <View>
         <Text>Name</Text>
         <TextInput
-          onChangeText={(name) => user && setUser({ ...user, name })}
+          onChangeText={(name) => setUser({ ...user, name })}
           placeholder="Tell the name"
           value={user?.name}
           style={styles.input}
@@ -26,7 +28,7 @@ const UserForm = ({ route, navigation }: RouteProps) => {
       <View>
         <Text>Email</Text>
         <TextInput
-          onChangeText={(email) => user && setUser({ ...user, email })}
+          onChangeText={(email) => setUser({ ...user, email })}
           placeholder="Tell the email"
           value={user?.email}
           style={styles.input}
@@ -36,6 +38,10 @@ const UserForm = ({ route, navigation }: RouteProps) => {
         <Button
           title={'Save'}
           onPress={() => {
+            dispatch({
+              type: user?.id ? 'updateUser' : 'createUser',
+              payload: user,
+            });
             navigation.goBack();
           }}
         />

@@ -1,35 +1,29 @@
 import { View, FlatList, Alert } from 'react-native';
-import { useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { Avatar, ListItem } from 'react-native-elements';
 import { Navigation } from '../../App';
+import UsersContext from '../contexts/UsersContext';
 
 export interface UserData {
   id: number;
   name: string;
   username: string;
   email: string;
+  avatar?: string;
 }
 
 const UserList = ({ navigation }: Navigation) => {
-  const [users, setUsers] = useState<[UserData] | []>([]);
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      const data = await fetch('https://jsonplaceholder.typicode.com/users/');
-      const usersData: [UserData] = await data.json();
-
-      setUsers(usersData);
-    };
-
-    fetchUsers();
-  }, []);
+  const { state, dispatch } = useContext(UsersContext);
 
   const confirmUserDeletion = (item: UserData) => {
     Alert.alert('Delete user', 'Do you like to delete this user?', [
       {
         text: 'Yes',
         onPress() {
-          console.warn('Deleted ' + item.id);
+          dispatch({
+            type: 'deleteUser',
+            payload: item,
+          });
         },
       },
       {
@@ -49,7 +43,7 @@ const UserList = ({ navigation }: Navigation) => {
           navigation.navigate('UserForm', item);
         }}
       >
-        <Avatar title={item.name} size={40} source={{ uri: avatar }} rounded={true} />
+        <Avatar title={item.name} size={40} source={{ uri: item.avatar ?? avatar }} rounded={true} />
         <ListItem.Content>
           <ListItem.Title>{item.name}</ListItem.Title>
           <ListItem.Subtitle>{item.email}</ListItem.Subtitle>
@@ -74,7 +68,7 @@ const UserList = ({ navigation }: Navigation) => {
 
   return (
     <View>
-      <FlatList data={users} renderItem={RenderUsers} keyExtractor={(item) => item.id.toString()} />
+      <FlatList data={state?.users} renderItem={RenderUsers} keyExtractor={(item) => item.id.toString()} />
     </View>
   );
 };
