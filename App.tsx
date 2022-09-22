@@ -4,10 +4,11 @@ import UserList, { UserData } from './src/views/UserList';
 import UserForm from './src/views/UserForm';
 import { Button, Icon } from 'react-native-elements';
 import { UsersProvider } from './src/contexts/UsersContext';
+import MoreInfo from './src/views/MoreInfo';
 
 const Stack = createNativeStackNavigator();
 
-export type Navigation = NativeStackScreenProps<{ UserForm: UserData | undefined }>;
+export type Navigation = NativeStackScreenProps<{ UserForm: UserData | undefined; MoreInfo: UserData }>;
 
 export default function App() {
   return (
@@ -38,6 +39,7 @@ export default function App() {
             }}
           />
           <Stack.Screen name="UserForm" component={UserForm} options={{ title: 'Users form' }} />
+          <Stack.Screen name="MoreInfo" component={MoreInfo} options={{ title: 'More info' }} />
         </Stack.Navigator>
       </NavigationContainer>
     </UsersProvider>

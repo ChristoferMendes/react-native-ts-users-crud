@@ -1,5 +1,5 @@
 import { View, FlatList, Alert } from 'react-native';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Avatar, ListItem } from 'react-native-elements';
 import { Navigation } from '../../App';
 import UsersContext from '../contexts/UsersContext';
@@ -13,7 +13,18 @@ export interface UserData {
 }
 
 const UserList = ({ navigation }: Navigation) => {
-  const { state, dispatch } = useContext(UsersContext);
+  const { users, state, dispatch } = useContext(UsersContext);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const data = await fetch('https://jsonplaceholder.typicode.com/users/');
+      const usersData: [UserData] = await data.json();
+
+      dispatch({ type: 'loadUsers', payload: usersData });
+    };
+
+    fetchUsers();
+  }, [users]);
 
   const confirmUserDeletion = (item: UserData) => {
     Alert.alert('Delete user', 'Do you like to delete this user?', [
@@ -40,7 +51,7 @@ const UserList = ({ navigation }: Navigation) => {
         hasTVPreferredFocus={undefined}
         tvParallaxProperties={undefined}
         onPress={() => {
-          navigation.navigate('UserForm', item);
+          navigation.navigate('MoreInfo', item);
         }}
       >
         <Avatar title={item.name} size={40} source={{ uri: item.avatar ?? avatar }} rounded={true} />
