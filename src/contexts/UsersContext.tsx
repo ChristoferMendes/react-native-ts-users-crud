@@ -1,52 +1,66 @@
-import { createContext, PropsWithChildren, useReducer, useState } from 'react';
-// import users from '../data/Users';
+import { createContext, PropsWithChildren, useContext, useReducer } from 'react';
 import { UserData } from '../views/UserList';
 
 interface UserCtx {
-  state: { users: [UserData] | [] };
-  dispatch: any;
+  state: {
+    users: UserData[] | [];
+  };
+  dispatch: React.Dispatch<Action>;
 }
 
 interface Action {
   type: string;
-  payload: UserData;
+  payload: UserData | UserData[];
 }
 
 interface State {
-  users: [UserData];
+  users: UserData[] | [];
 }
 
-const UsersContext = createContext<any>({}); //@TO DO: FIX ANY TYPE
+const UsersContext = createContext({} as UserCtx);
 
 export const UsersProvider = ({ children }: PropsWithChildren) => {
-  const initialState = { users: {} };
+  const initialState = { users: [] as UserData[] };
+
   const actions = {
-    loadUsers(state: State, action: Action) {
+    storeUsers(state: State, action: Action) {
       const users = action.payload;
-      return { ...state, users };
+      return { ...state, users } as State;
     },
-    createUser(state: State, action: Action) {
+    createUser(state = initialState, action: Action) {
       const user = action.payload;
-      user.id = Math.random(); // THIS LINE IS GIVING AN ERROR!
+      if (Array.isArray(user)) return;
+      user.id = Math.random();
       user.avatar = `https://xsgames.co/randomusers/assets/avatars/pixel/33.jpg`;
-      return { ...state, users: [...state.users, user] };
+      const copyOfUsers = [...state.users];
+      return { ...state, users: [...copyOfUsers, user] } as State;
     },
-    updateUser(state: State, action: Action) {
+    updateUser(state = initialState, action: Action) {
       const updated = action.payload;
-      return { ...state, users: state.users.map((u) => (u.id === updated.id ? updated : u)) };
+      if (Array.isArray(updated)) return;
+      const userUpdate = state.users.map((u) => {
+        if (u.id !== updated.id) return u;
+
+        return updated;
+      });
+
+      return { ...state, users: userUpdate } as State;
     },
-    deleteUser(state: State, action: Action) {
+    deleteUser(state = initialState, action: Action) {
       const user = action.payload;
-      return { ...state, users: state.users.filter((u) => u.id !== user.id) };
+      if (Array.isArray(user)) return;
+      return { ...state, users: state.users.filter((u) => u.id !== user.id) } as State;
     },
   };
 
   function reducer(state: State, action: Action) {
     const stateWillEvolve = actions[action.type as keyof typeof actions];
 
-    return stateWillEvolve ? stateWillEvolve(state, action) : state;
+    return stateWillEvolve(state, action) ?? state;
   }
-  const [state, dispatch] = useReducer<any>(reducer, initialState); //@TO DO: FIX ANY TYPE
+
+  const [state, dispatch] = useReducer(reducer, initialState);
+
   return (
     <UsersContext.Provider
       value={{
@@ -59,4 +73,4 @@ export const UsersProvider = ({ children }: PropsWithChildren) => {
   );
 };
 
-export default UsersContext;
+export const useUserContext = () => useContext(UsersContext);

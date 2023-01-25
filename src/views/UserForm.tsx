@@ -1,9 +1,9 @@
 import { View, Text, TextInput, StyleSheet } from 'react-native';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { UserData } from './UserList';
 import { Button } from 'react-native-elements';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import UsersContext from '../contexts/UsersContext';
+import { useUserContext } from '../contexts/UsersContext';
 
 export interface RouteProps {
   route: { params: UserData };
@@ -11,8 +11,8 @@ export interface RouteProps {
 }
 
 const UserForm = ({ route, navigation }: RouteProps) => {
-  const [user, setUser] = useState<UserData | any>(route ? route.params : {}); //@ TO DO: SOLVE CONFLICTS WHEN THERE'S NO USER
-  const { dispatch } = useContext(UsersContext);
+  const [user, setUser] = useState(route ? route.params : ({} as UserData));
+  const { dispatch } = useUserContext();
 
   return (
     <View style={styles.form}>

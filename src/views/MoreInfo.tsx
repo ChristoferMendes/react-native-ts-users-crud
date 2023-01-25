@@ -1,6 +1,5 @@
 import { View, Text } from 'react-native';
 import React from 'react';
-import { UserData } from './UserList';
 
 //@TO DO: Remove any type
 const MoreInfo = ({ route }: any) => {
