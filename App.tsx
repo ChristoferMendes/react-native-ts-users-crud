@@ -2,7 +2,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navigation/native-stack';
 import UserList, { UserData } from './src/views/UserList';
 import UserForm from './src/views/UserForm';
-import { Button, Icon } from 'react-native-elements';
 import { UsersProvider } from './src/contexts/UsersContext';
 import MoreInfo from './src/views/MoreInfo';
 import { HeaderRightButton } from './src/components/HeaderRightButton';
@@ -19,7 +18,7 @@ export default function App() {
           <Stack.Screen
             name="UserList"
             component={UserList}
-            options={({ navigation }: Navigation) => {
+            options={() => {
               return {
                 title: 'Users List',
                 headerRight: HeaderRightButton,
