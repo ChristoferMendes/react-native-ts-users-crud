@@ -5,6 +5,7 @@ import UserForm from './src/views/UserForm';
 import { Button, Icon } from 'react-native-elements';
 import { UsersProvider } from './src/contexts/UsersContext';
 import MoreInfo from './src/views/MoreInfo';
+import { HeaderRightButton } from './src/components/HeaderRightButton';
 
 const Stack = createNativeStackNavigator();
 
@@ -21,20 +22,7 @@ export default function App() {
             options={({ navigation }: Navigation) => {
               return {
                 title: 'Users List',
-                headerRight: () => (
-                  <Button
-                    type="clear"
-                    icon={
-                      <Icon
-                        name="add"
-                        size={25}
-                        color={'#fff'}
-                        tvParallaxProperties={undefined}
-                        onPress={() => navigation.navigate('UserForm')}
-                      />
-                    }
-                  />
-                ),
+                headerRight: HeaderRightButton,
               };
             }}
           />
